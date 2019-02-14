@@ -1,10 +1,14 @@
 #!/bin/bash
 
 _START=$(expr $(date +%s%N) / 1000)
-
 _WAITSECONDS=60
 
 _COUNTERS="$(ovs-appctl dpctl/show -s)"
+
+_END=$(expr $(date +%s%N) / 1000)
+# Make sure usleep runs only for the required purpose
+usleep $(bc <<< "(${_WAITSECONDS} * 1000 * 1000) - (${_END} - ${_START})") 2>/dev/null &
+
 _PORTS="$(echo "${_COUNTERS}"|grep -E "port [0-9]{1,99}:"|awk '{print $3}'|sort|wc -l)"
 
 _COUNT=0
@@ -22,8 +26,8 @@ do
 	((_COUNT++))
 done <<< "$(echo "${_COUNTERS}"|grep -E "port [0-9]{1,99}:"|awk '{print $3}'|sort)"
 
-_END=$(expr $(date +%s%N) / 1000)
-usleep $(bc <<< "(${_WAITSECONDS} * 1000 * 1000) - (${_END} - ${_START})") 2>/dev/null
+# Process OVS stats in background while waiting for usleep to complete
+wait
 
 _COUNTERS="$(ovs-appctl dpctl/show -s)"
 
