@@ -5,39 +5,39 @@ Generate Open vSwitch network statistics
 
 ### Example output
 ```
-########## Open vSwitch DPDK STATS over 300 seconds ##########
+########## Open vSwitch DPDK STATS over 60 seconds ##########
                    Port             TX             RX       TX Drops       RX Drops      TX Errors      RX Errors         TX PPS         RX PPS    TX & RX PPS   TX Drops PPS   RX Drops PPS
-                 br-int              0              0       52116093              0              0              0              0              0              0          51.61              0
-        br-int-snooper0    95404323462              0              0              0              0              0      351629.06              0      351629.06              0              0
-                  br-n0      253722977              8       74113822              0              0              0         235.75              0         235.75          71.86              0
-                  br-n1      253721746              8       74114040              0              0              0         235.73              0         235.73          71.85              0
-                  dpdk0     2304183064     1749629323              0              0              0              0        5037.01        3753.33        8790.35              0              0
-                  dpdk1     1708314351     2377954475              0              0              0              0        3607.91        4792.11        8400.03              0              0
-                  dpdk2   158265561382   100683404067              0           3166              0              0       52733.61      146433.93      199167.55              0              0
-                  dpdk3    64521888856   122626420532              0           2429              0              0      272924.00      179313.26      452237.26              0              0
+                 br-int              0              0           3081              0              0              0              0              0              0          51.35              0
+        br-int-snooper0       20998298              0              0              0              0              0      349971.63              0      349971.63              0              0
+                  br-n0          14118              0           4321              0              0              0         235.30              0         235.30          72.01              0
+                  br-n1          14119              0           4321              0              0              0         235.31              0         235.31          72.01              0
+                  dpdk0         276564         212366              0              0              0              0        4609.40        3539.43        8148.83              0              0
+                  dpdk1         251564         311087              0              0              0              0        4192.73        5184.78        9377.51              0              0
+                  dpdk2       18944912        8239414              0              0              0              0      315748.53      137323.56      453072.10              0              0
+                  dpdk3         502874       11211937              0              0              0              0        8381.23      186865.61      195246.85              0              0
              ovs-netdev              0              0              0              0              0              0              0              0              0              0              0
-         tbr-e36bb74d-1              0              0         774770              0              0              0              0              0              0            .76              0
-         vhu30435df2-3a   180866166427    30855651250         479504              0                             0      265660.08       50678.68      316338.76              0              0
-         vhu38309cc7-8c     2019108751     2141605466           1060              0                             0        4088.40        4358.58        8446.98              0              0
-         vhubf1a0856-72     1864751199     1870821933            523              0                             0        4231.26        4286.30        8517.56              0              0
-         vhud40edf72-6c    30522408120   180062419688          15870              0                             0       50280.10      265174.35      315454.45              0              0
-         vhud5de0985-00    11671176412    11869309218       36318702              0                             0        9610.15        9804.25       19414.40           3.35              0
+         tbr-115453ba-3              0              0             46              0              0              0              0              0              0            .76              0
+         vhu0bffebd7-bd         555645         567197            635              0              0              0        9260.75        9453.28       18714.03          10.58              0
+         vhu32abd017-2f        3062135       15792445              0              0              0              0       51035.58      263207.41      314243.00              0              0
+         vhu3b19783d-e3         269152         272250              0              0              0              0        4485.86        4537.50        9023.36              0              0
+         vhu61df6cc2-2e         240775         255882              0              0              0              0        4012.91        4264.70        8277.61              0              0
+         vhud0abf04e-08       15821210        3088116              0              0              0              0      263686.83       51468.60      315155.43              0              0
 
-########## Open vSwitch DPDK RATES ##########
+########## Open vSwitch DPDK RATES over 60 seconds ##########
                    Port             TX             RX        TX Rate        RX Rate   TX & RX Rate
                  br-int             0B             0B           0B/s           0B/s           0B/s
-        br-int-snooper0          16TiB             0B         57MB/s           0B/s         57MB/s
-                  br-n0          21GiB           648B         20KB/s           0B/s         20KB/s
-                  br-n1          21GiB           648B         20KB/s           0B/s         20KB/s
-                  dpdk0         806GiB         424GiB        1.8MB/s        994KB/s        2.7MB/s
-                  dpdk1         663GiB         987GiB        1.5MB/s        2.0MB/s        3.4MB/s
-                  dpdk2          24TiB          14TiB        8.0MB/s         20MB/s         28MB/s
-                  dpdk3          11TiB          16TiB         42MB/s         24MB/s         65MB/s
+        br-int-snooper0         3.4GiB             0B         57MB/s           0B/s         57MB/s
+                  br-n0         1.2MiB             0B         20KB/s           0B/s         20KB/s
+                  br-n1         1.2MiB             0B         20KB/s           0B/s         20KB/s
+                  dpdk0         122MiB          55MiB        2.1MB/s        936KB/s        3.0MB/s
+                  dpdk1          86MiB         145MiB        1.5MB/s        2.5MB/s        3.9MB/s
+                  dpdk2         2.8GiB         1.1GiB         48MB/s         19MB/s         66MB/s
+                  dpdk3          96MiB         1.5GiB        1.6MB/s         25MB/s         27MB/s
              ovs-netdev             0B             0B           0B/s           0B/s           0B/s
-         tbr-e36bb74d-1             0B             0B           0B/s           0B/s           0B/s
-         vhu30435df2-3a          23TiB         4.7TiB         35MB/s        7.4MB/s         42MB/s
-         vhu38309cc7-8c         622GiB         683GiB        1.4MB/s        1.6MB/s        2.9MB/s
-         vhubf1a0856-72         755GiB         771GiB        1.6MB/s        1.6MB/s        3.1MB/s
-         vhud40edf72-6c         4.3TiB          26TiB        6.8MB/s         39MB/s         46MB/s
-         vhud5de0985-00         2.3TiB         2.7TiB        1.8MB/s        2.2MB/s        4.0MB/s
+         tbr-115453ba-3             0B             0B           0B/s           0B/s           0B/s
+         vhu0bffebd7-bd         109MiB         129MiB        1.9MB/s        2.2MB/s        4.0MB/s
+         vhu32abd017-2f         414MiB         2.3GiB        6.9MB/s         39MB/s         46MB/s
+         vhu3b19783d-e3         115MiB         118MiB        2.0MB/s        2.0MB/s        3.9MB/s
+         vhu61df6cc2-2e          82MiB          87MiB        1.4MB/s        1.5MB/s        2.9MB/s
+         vhud0abf04e-08         2.0GiB         443MiB         34MB/s        7.4MB/s         42MB/s
 ```
