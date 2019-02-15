@@ -63,12 +63,12 @@ printf "%15s" \
 echo
 for (( i=0 ; i<${#_NAME[@]} ; i++ ))
 do
-	_TX="$( bc <<< "scale=2; ${_TXT1[${i}]}" )"
-	_RX="$( bc <<< "scale=2; ${_RXT1[${i}]}" )"
-	_TXDROP="$( bc <<< "scale=2; ${_TXDROPT1[${i}]}" )"
-	_RXDROP="$( bc <<< "scale=2; ${_RXDROPT1[${i}]}" )"
-	_TXE="$( bc <<< "scale=2; ${_TXERRORT1[${i}]}" )"
-	_RXE="$( bc <<< "scale=2; ${_RXERRORT1[${i}]}" )"
+	_TX="$( bc <<< "scale=2; ${_TXT1[${i}]} - ${_TXT0[${i}]}" )"
+	_RX="$( bc <<< "scale=2; ${_RXT1[${i}]} - ${_RXT0[${i}]}" )"
+	_TXDROP="$( bc <<< "scale=2; ${_TXDROPT1[${i}]} - ${_TXDROPT0[${i}]}" )"
+	_RXDROP="$( bc <<< "scale=2; ${_RXDROPT1[${i}]} - ${_RXDROPT0[${i}]}" )"
+	_TXE="$( bc <<< "scale=2; ${_TXERRORT1[${i}]} - ${_TXERRORT0[${i}]}" )"
+	_RXE="$( bc <<< "scale=2; ${_RXERRORT1[${i}]} - ${_RXERRORT0[${i}]}" )"
 	_TXS="$( bc <<< "scale=2; (${_TXT1[${i}]} - ${_TXT0[${i}]}) / ${_WAITSECONDS}" )"
 	_RXS="$( bc <<< "scale=2; (${_RXT1[${i}]} - ${_RXT0[${i}]}) / ${_WAITSECONDS}" )"
 	_TXRXS="$( bc <<< "scale=2; ( (${_TXT1[${i}]} - ${_TXT0[${i}]}) + (${_RXT1[${i}]} - ${_RXT0[${i}]}) ) / ${_WAITSECONDS}" )"
@@ -103,8 +103,8 @@ printf "%15s" \
 echo
 for (( i=0 ; i<${#_NAME[@]} ; i++ ))
 do
-	_TXB="$( numfmt --to=iec-i --suffix=B ${_TXBT1[${i}]} )"
-	_RXB="$( numfmt --to=iec-i --suffix=B ${_RXBT1[${i}]} )"
+	_TXB="$( numfmt --to=iec-i --suffix=B $( bc <<< "scale=2; ${_TXBT1[${i}]} - ${_TXBT0[${i}]}" ) )"
+	_RXB="$( numfmt --to=iec-i --suffix=B $( bc <<< "scale=2; ${_RXBT1[${i}]} - ${_RXBT0[${i}]}" ) )"
 	_TXR="$( numfmt --to=iec --suffix=B $( bc <<< "scale=2; (${_TXBT1[${i}]} - ${_TXBT0[${i}]}) / ${_WAITSECONDS}" ) )/s"
 	_RXR="$( numfmt --to=iec --suffix=B $( bc <<< "scale=2; (${_RXBT1[${i}]} - ${_RXBT0[${i}]}) / ${_WAITSECONDS}" ) )/s"
 	_TXRXR="$( numfmt --to=iec --suffix=B $( bc <<< "scale=2; ( (${_TXBT1[${i}]} - ${_TXBT0[${i}]}) + (${_RXBT1[${i}]} - ${_RXBT0[${i}]}) ) / ${_WAITSECONDS}" ) )/s"
