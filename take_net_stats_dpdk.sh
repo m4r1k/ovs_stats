@@ -95,7 +95,7 @@ do
 	echo
 done
 
-echo -e "\n########## Open vSwitch DPDK RATES ##########"
+echo -e "\n########## Open vSwitch DPDK RATES over ${_WAITSECONDS} seconds ##########"
 printf "%23s" \
 	"Port"
 printf "%15s" \
