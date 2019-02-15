@@ -1,8 +1,12 @@
 # Open vSwitch DPDK Statistics
-
 ## Take Network Statistics for DPDK
-Generate Open vSwitch network statistics
-
+Generate Open vSwitch DPDK network statistics
+- Simple and easy to understand shell script
+- Aggregate port statistics showing RX, TX, drops, and errors
+- Aggregate port rates showing RX and TX total MB and MB/s
+- OVS-DPDK specific
+- Lightweight executing only two Open vSwitch commands
+- Precise time different calculator ensuring the Open vSwitch command overhead is taken into account while calculating the packet per seconds statistics
 ### Example output
 ```
 ########## Open vSwitch DPDK STATS over 60 seconds ##########
