@@ -18,7 +18,9 @@ do
 	_TXT0[${_COUNT}]=$(echo "${_COUNTERS}"|grep -A 4 -E "(${_PORT} \(|${_PORT}$)"|grep -E -o "TX packets:[0-9]{1,99}"|sed -e "s/^.*://g")
 	_RXT0[${_COUNT}]=$(echo "${_COUNTERS}"|grep -A 4 -E "(${_PORT} \(|${_PORT}$)"|grep -E -o "RX packets:[0-9]{1,99}"|sed -e "s/^.*://g")
 	_TXERRORT0[${_COUNT}]=$(echo "${_COUNTERS}"|grep -A 4 -E "(${_PORT} \(|${_PORT}$)"|grep -E -o "TX .*errors:[0-9]{1,99}"|grep -E -o "errors:[0-9]{1,99}"|sed -e "s/^.*://g")
+	[[ "${_TXERRORT0[${_COUNT}]}" == "" ]] && _TXERRORT0[${_COUNT}]=0
 	_RXERRORT0[${_COUNT}]=$(echo "${_COUNTERS}"|grep -A 4 -E "(${_PORT} \(|${_PORT}$)"|grep -E -o "RX .*errors:[0-9]{1,99}"|grep -E -o "errors:[0-9]{1,99}"|sed -e "s/^.*://g")
+	[[ "${_RXERRORT0[${_COUNT}]}" == "" ]] && _RXERRORT0[${_COUNT}]=0
 	_TXDROPT0[${_COUNT}]=$(echo "${_COUNTERS}"|grep -A 4 -E "(${_PORT} \(|${_PORT}$)"|grep -E -o "TX .*dropped:[0-9]{1,99}"|grep -E -o "dropped:[0-9]{1,99}"|sed -e "s/^.*://g")
 	_RXDROPT0[${_COUNT}]=$(echo "${_COUNTERS}"|grep -A 4 -E "(${_PORT} \(|${_PORT}$)"|grep -E -o "RX .*dropped:[0-9]{1,99}"|grep -E -o "dropped:[0-9]{1,99}"|sed -e "s/^.*://g")
 	_TXBT0[${_COUNT}]=$(echo "${_COUNTERS}"|grep -A 4 -E "(${_PORT} \(|${_PORT}$)"|grep -E -o "TX bytes:[0-9]{1,99}"|sed -e "s/^.*://g")
