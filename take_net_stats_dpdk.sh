@@ -109,9 +109,9 @@ for (( i=0 ; i<${#_NAME[@]} ; i++ ))
 do
 	_TXB="$( numfmt --to=iec-i --suffix=B $( bc <<< "scale=2; ${_TXBT1[${i}]} - ${_TXBT0[${i}]}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" ) )"
 	_RXB="$( numfmt --to=iec-i --suffix=B $( bc <<< "scale=2; ${_RXBT1[${i}]} - ${_RXBT0[${i}]}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" ) )"
-	_TXR="$( numfmt --to=iec --suffix=B $( bc <<< "scale=2; (${_TXBT1[${i}]} - ${_TXBT0[${i}]}) / ${_WAITSECONDS}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" ) )/s"
-	_RXR="$( numfmt --to=iec --suffix=B $( bc <<< "scale=2; (${_RXBT1[${i}]} - ${_RXBT0[${i}]}) / ${_WAITSECONDS}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" ) )/s"
-	_TXRXR="$( numfmt --to=iec --suffix=B $( bc <<< "scale=2; ( (${_TXBT1[${i}]} - ${_TXBT0[${i}]}) + (${_RXBT1[${i}]} - ${_RXBT0[${i}]}) ) / ${_WAITSECONDS}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" ) )/s"
+	_TXR="$( numfmt --to=iec --suffix=B $( bc <<< "scale=2; ( (${_TXBT1[${i}]} - ${_TXBT0[${i}]}) / ${_WAITSECONDS} ) * 8"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )|sed -e "s/B/bps/g" )"
+	_RXR="$( numfmt --to=iec --suffix=B $( bc <<< "scale=2; ( (${_RXBT1[${i}]} - ${_RXBT0[${i}]}) / ${_WAITSECONDS} ) * 8"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )|sed -e "s/B/bps/g" )"
+	_TXRXR="$( numfmt --to=iec --suffix=B $( bc <<< "scale=2; ( ( (${_TXBT1[${i}]} - ${_TXBT0[${i}]}) + (${_RXBT1[${i}]} - ${_RXBT0[${i}]}) ) / ${_WAITSECONDS} ) * 8"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )| sed -e "s/B/bps/g" )"
 	printf "%23s" \
 		"${_NAME[${i}]}"
 	printf "%15s" \
