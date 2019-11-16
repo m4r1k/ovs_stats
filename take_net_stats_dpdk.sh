@@ -4,39 +4,45 @@ _STATS=false
 _RATES=false
 _WAITSECONDS=60
 
-while [ $# -gt 0 ]; do
-	_ARG=$1
-	shift
-	case "${_ARG}" in
-		"-s"|"--stats")
-			_STATS=true
-		;;
-		"-r"|"--rates")
-			_RATES=true
-		;;
-		"-d"|"--duration")
-			if ! [[ "${1}" =~ ^[0-9]+$ ]]; then
-		        	echo "WARNING - Invalid duration -.-' Using default 60 seconds"
-		        	_WAITSECONDS=60
-			else
-		        	_WAITSECONDS=$1
-			fi
-			shift
-		;;
-		"-h"|"--help"|"?")
-			echo -e "Open vSwitch packet statistics\n"
-			echo "-h|--help - Help"
-			echo "-s|--stats - Packets per Second statistics (default option)"
-			echo "-r|--rates - Rates per Seconds statistics"
-			echo "-d <seconds>|--duration <seconds> - How long to collect statistics"
-			echo -e "\nFederico Iezzi - fiezzi@redhat.com"
-			exit 1
-		;;
-		*)
-			_STATS=true
-		;;
-	esac
-done
+if (( $# == 0 )); then
+        _STATS=true
+else
+	while [ $# -gt 0 ]; do
+		_ARG=$1
+		shift
+		case "${_ARG}" in
+			"-s"|"--stats")
+				_STATS=true
+			;;
+			"-r"|"--rates")
+				_RATES=true
+			;;
+			"-d"|"--duration")
+				if ! [[ "${1}" =~ ^[0-9]+$ ]]; then
+			        	echo "WARNING - Invalid duration -.-' Using default 60 seconds"
+			        	_WAITSECONDS=60
+				else
+			        	_WAITSECONDS=$1
+				fi
+	
+	                        if [[ "$(echo ${@}|sed -e 's/--duration//g' -e 's/-d//g' -e 's/[0-9]//g' -e 's/ //g')" == "" ]]; then
+	                                _STATS=true
+	                        fi
+	
+				shift
+			;;
+			*)
+				echo -e "Open vSwitch packet statistics\n"
+				echo "-h|--help - Help"
+				echo "-s|--stats - Packets per Second statistics (default option)"
+				echo "-r|--rates - Rates per Second statistics"
+				echo "-d <seconds>|--duration <seconds> - How long to collect statistics"
+				echo -e "\nFederico Iezzi - fiezzi@redhat.com"
+				exit 1
+			;;
+		esac
+	done
+fi
 
 _START=$(expr $(date +%s%N) / 1000)
 
