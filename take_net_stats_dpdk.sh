@@ -6,7 +6,8 @@ _WAITSECONDS=60
 _COUNTERS="$(ovs-appctl dpctl/show -s)"
 
 _END=$(expr $(date +%s%N) / 1000)
-# Make sure usleep runs only for the required purpose
+
+# Ensure the wait time between two 'ovs-appctl dpctl/show -s' iteration is precise at the microsecond
 usleep $(bc <<< "(${_WAITSECONDS} * 1000 * 1000) - (${_END} - ${_START})") 2>/dev/null &
 
 _PORTS="$(echo "${_COUNTERS}"|grep -E "port [0-9]{1,99}:"|awk '{print $3}'|sort|wc -l)"
