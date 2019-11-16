@@ -9,6 +9,7 @@ Generate Open vSwitch DPDK network statistics
 - Precise time different calculator ensuring the Open vSwitch command overhead is taken into account while calculating the packet per seconds statistics
 ### Example output
 ```
+# take_net_stats_dpdk.sh --duration 60 --rates --stats
 ########## Open vSwitch DPDK STATS over 60 seconds ##########
                    Port             TX             RX       TX Drops       RX Drops      TX Errors      RX Errors         TX PPS         RX PPS    TX & RX PPS   TX Drops PPS   RX Drops PPS
                  br-int              0              0           3083              0              0              0              0              0              0          51.38              0

@@ -1,7 +1,44 @@
 #!/bin/bash
 
-_START=$(expr $(date +%s%N) / 1000)
+_STATS=false
+_RATES=false
 _WAITSECONDS=60
+
+while [ $# -gt 0 ]; do
+	_ARG=$1
+	shift
+	case "${_ARG}" in
+		"-s"|"--stats")
+			_STATS=true
+		;;
+		"-r"|"--rates")
+			_RATES=true
+		;;
+		"-d"|"--duration")
+			if ! [[ "${1}" =~ ^[0-9]+$ ]]; then
+		        	echo "WARNING - Invalid duration -.-' Using default 60 seconds"
+		        	_WAITSECONDS=60
+			else
+		        	_WAITSECONDS=$1
+			fi
+			shift
+		;;
+		"-h"|"--help"|"?")
+			echo -e "Open vSwitch packet statistics\n"
+			echo "-h|--help - Help"
+			echo "-s|--stats - Packets per Second statistics (default option)"
+			echo "-r|--rates - Rates per Seconds statistics"
+			echo "-d <seconds>|--duration <seconds> - How long to collect statistics"
+			echo -e "\nFederico Iezzi - fiezzi@redhat.com"
+			exit 1
+		;;
+		*)
+			_STATS=true
+		;;
+	esac
+done
+
+_START=$(expr $(date +%s%N) / 1000)
 
 _COUNTERS="$(ovs-appctl dpctl/show -s)"
 
@@ -56,78 +93,82 @@ do
         ((_COUNT++))
 done <<< "$(echo "${_COUNTERS}"|grep -E "port [0-9]{1,99}:"|awk '{print $3}'|sort)"
 
-echo -e "\n########## Open vSwitch DPDK STATS over ${_WAITSECONDS} seconds ##########"
-printf "%23s" \
-	"Port"
-printf "%15s" \
-	"TX" \
-	"RX" \
-	"TX Drops" \
-	"RX Drops" \
-	"TX Errors" \
-	"RX Errors" \
-	"TX PPS" \
-	"RX PPS" \
-	"TX & RX PPS" \
-	"TX Drops PPS" \
-	"RX Drops PPS"
-echo
-for (( i=0 ; i<${#_NAME[@]} ; i++ ))
-do
-	_TX="$( bc <<< "scale=2; ${_TXT1[${i}]} - ${_TXT0[${i}]}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
-	_RX="$( bc <<< "scale=2; ${_RXT1[${i}]} - ${_RXT0[${i}]}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
-	_TXDROP="$( bc <<< "scale=2; ${_TXDROPT1[${i}]} - ${_TXDROPT0[${i}]}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
-	_RXDROP="$( bc <<< "scale=2; ${_RXDROPT1[${i}]} - ${_RXDROPT0[${i}]}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
-	_TXE="$( bc <<< "scale=2; ${_TXERRORT1[${i}]} - ${_TXERRORT0[${i}]}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
-	_RXE="$( bc <<< "scale=2; ${_RXERRORT1[${i}]} - ${_RXERRORT0[${i}]}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
-	_TXS="$( bc <<< "scale=2; (${_TXT1[${i}]} - ${_TXT0[${i}]}) / ${_WAITSECONDS}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
-	_RXS="$( bc <<< "scale=2; (${_RXT1[${i}]} - ${_RXT0[${i}]}) / ${_WAITSECONDS}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
-	_TXRXS="$( bc <<< "scale=2; ( (${_TXT1[${i}]} - ${_TXT0[${i}]}) + (${_RXT1[${i}]} - ${_RXT0[${i}]}) ) / ${_WAITSECONDS}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
-	_TXDROPS="$( bc <<< "scale=2; (${_TXDROPT1[${i}]} - ${_TXDROPT0[${i}]}) / ${_WAITSECONDS}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
-	_RXDROPS="$( bc <<< "scale=2; (${_RXDROPT1[${i}]} - ${_RXDROPT0[${i}]}) / ${_WAITSECONDS}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
+if ${_STATS} ; then
+	echo -e "\n########## Open vSwitch DPDK STATS over ${_WAITSECONDS} seconds ##########"
 	printf "%23s" \
-		"${_NAME[${i}]}"
+		"Port"
 	printf "%15s" \
-		"${_TX}" \
-		"${_RX}" \
-		"${_TXDROP}" \
-		"${_RXDROP}" \
-		"${_TXE}" \
-		"${_RXE}" \
-		"${_TXS}" \
-		"${_RXS}" \
-		"${_TXRXS}" \
-		"${_TXDROPS}" \
-		"${_RXDROPS}"
+		"TX" \
+		"RX" \
+		"TX Drops" \
+		"RX Drops" \
+		"TX Errors" \
+		"RX Errors" \
+		"TX PPS" \
+		"RX PPS" \
+		"TX & RX PPS" \
+		"TX Drops PPS" \
+		"RX Drops PPS"
 	echo
-done
+	for (( i=0 ; i<${#_NAME[@]} ; i++ ))
+	do
+		_TX="$( bc <<< "scale=2; ${_TXT1[${i}]} - ${_TXT0[${i}]}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
+		_RX="$( bc <<< "scale=2; ${_RXT1[${i}]} - ${_RXT0[${i}]}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
+		_TXDROP="$( bc <<< "scale=2; ${_TXDROPT1[${i}]} - ${_TXDROPT0[${i}]}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
+		_RXDROP="$( bc <<< "scale=2; ${_RXDROPT1[${i}]} - ${_RXDROPT0[${i}]}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
+		_TXE="$( bc <<< "scale=2; ${_TXERRORT1[${i}]} - ${_TXERRORT0[${i}]}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
+		_RXE="$( bc <<< "scale=2; ${_RXERRORT1[${i}]} - ${_RXERRORT0[${i}]}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
+		_TXS="$( bc <<< "scale=2; (${_TXT1[${i}]} - ${_TXT0[${i}]}) / ${_WAITSECONDS}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
+		_RXS="$( bc <<< "scale=2; (${_RXT1[${i}]} - ${_RXT0[${i}]}) / ${_WAITSECONDS}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
+		_TXRXS="$( bc <<< "scale=2; ( (${_TXT1[${i}]} - ${_TXT0[${i}]}) + (${_RXT1[${i}]} - ${_RXT0[${i}]}) ) / ${_WAITSECONDS}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
+		_TXDROPS="$( bc <<< "scale=2; (${_TXDROPT1[${i}]} - ${_TXDROPT0[${i}]}) / ${_WAITSECONDS}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
+		_RXDROPS="$( bc <<< "scale=2; (${_RXDROPT1[${i}]} - ${_RXDROPT0[${i}]}) / ${_WAITSECONDS}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )"
+		printf "%23s" \
+			"${_NAME[${i}]}"
+		printf "%15s" \
+			"${_TX}" \
+			"${_RX}" \
+			"${_TXDROP}" \
+			"${_RXDROP}" \
+			"${_TXE}" \
+			"${_RXE}" \
+			"${_TXS}" \
+			"${_RXS}" \
+			"${_TXRXS}" \
+			"${_TXDROPS}" \
+			"${_RXDROPS}"
+		echo
+	done
+fi
 
-echo -e "\n########## Open vSwitch DPDK RATES over ${_WAITSECONDS} seconds ##########"
-printf "%23s" \
-	"Port"
-printf "%15s" \
-	"TX" \
-	"RX" \
-	"TX Rate" \
-	"RX Rate" \
-	"TX & RX Rate"
-echo
-for (( i=0 ; i<${#_NAME[@]} ; i++ ))
-do
-	_TXB="$( numfmt --to=iec-i --suffix=B $( bc <<< "scale=2; ${_TXBT1[${i}]} - ${_TXBT0[${i}]}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" ) )"
-	_RXB="$( numfmt --to=iec-i --suffix=B $( bc <<< "scale=2; ${_RXBT1[${i}]} - ${_RXBT0[${i}]}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" ) )"
-	_TXR="$( numfmt --to=iec --suffix=B $( bc <<< "scale=2; ( (${_TXBT1[${i}]} - ${_TXBT0[${i}]}) / ${_WAITSECONDS} ) * 8"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )|sed -e "s/B/bps/g" )"
-	_RXR="$( numfmt --to=iec --suffix=B $( bc <<< "scale=2; ( (${_RXBT1[${i}]} - ${_RXBT0[${i}]}) / ${_WAITSECONDS} ) * 8"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )|sed -e "s/B/bps/g" )"
-	_TXRXR="$( numfmt --to=iec --suffix=B $( bc <<< "scale=2; ( ( (${_TXBT1[${i}]} - ${_TXBT0[${i}]}) + (${_RXBT1[${i}]} - ${_RXBT0[${i}]}) ) / ${_WAITSECONDS} ) * 8"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )| sed -e "s/B/bps/g" )"
+if ${_RATES} ; then
+	echo -e "\n########## Open vSwitch DPDK RATES over ${_WAITSECONDS} seconds ##########"
 	printf "%23s" \
-		"${_NAME[${i}]}"
+		"Port"
 	printf "%15s" \
-		"${_TXB}" \
-		"${_RXB}" \
-		"${_TXR}" \
-		"${_RXR}" \
-		"${_TXRXR}"
+		"TX" \
+		"RX" \
+		"TX Rate" \
+		"RX Rate" \
+		"TX & RX Rate"
 	echo
-done
+	for (( i=0 ; i<${#_NAME[@]} ; i++ ))
+	do
+		_TXB="$( numfmt --to=iec-i --suffix=B $( bc <<< "scale=2; ${_TXBT1[${i}]} - ${_TXBT0[${i}]}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" ) )"
+		_RXB="$( numfmt --to=iec-i --suffix=B $( bc <<< "scale=2; ${_RXBT1[${i}]} - ${_RXBT0[${i}]}"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" ) )"
+		_TXR="$( numfmt --to=iec --suffix=B $( bc <<< "scale=2; ( (${_TXBT1[${i}]} - ${_TXBT0[${i}]}) / ${_WAITSECONDS} ) * 8"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )|sed -e "s/B/bps/g" )"
+		_RXR="$( numfmt --to=iec --suffix=B $( bc <<< "scale=2; ( (${_RXBT1[${i}]} - ${_RXBT0[${i}]}) / ${_WAITSECONDS} ) * 8"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )|sed -e "s/B/bps/g" )"
+		_TXRXR="$( numfmt --to=iec --suffix=B $( bc <<< "scale=2; ( ( (${_TXBT1[${i}]} - ${_TXBT0[${i}]}) + (${_RXBT1[${i}]} - ${_RXBT0[${i}]}) ) / ${_WAITSECONDS} ) * 8"|sed -e "s/^\./0./g" -e "s/^-\./-0./g" )| sed -e "s/B/bps/g" )"
+		printf "%23s" \
+			"${_NAME[${i}]}"
+		printf "%15s" \
+			"${_TXB}" \
+			"${_RXB}" \
+			"${_TXR}" \
+			"${_RXR}" \
+			"${_TXRXR}"
+		echo
+	done
+fi
 
 exit 0
