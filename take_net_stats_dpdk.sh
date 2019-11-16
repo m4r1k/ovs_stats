@@ -14,6 +14,9 @@ _PORTS="$(echo "${_COUNTERS}"|grep -E "port [0-9]{1,99}:"|awk '{print $3}'|sort|
 _COUNT=0
 while read -r _PORT
 do
+	# Ensure to exclude VXLAN and GRE system ports
+	if [[ "${_PORT}" =~ "gre_sys" || "${_PORT}" =~ "vxlan_sys" ]]; then break; fi
+
 	_NAME[${_COUNT}]=${_PORT}
 	_TXT0[${_COUNT}]=$(echo "${_COUNTERS}"|grep -A 4 -E "(${_PORT} \(|${_PORT}$)"|grep -E -o "TX packets:[0-9]{1,99}"|sed -e "s/^.*://g")
 	_RXT0[${_COUNT}]=$(echo "${_COUNTERS}"|grep -A 4 -E "(${_PORT} \(|${_PORT}$)"|grep -E -o "RX packets:[0-9]{1,99}"|sed -e "s/^.*://g")
@@ -36,6 +39,9 @@ _COUNTERS="$(ovs-appctl dpctl/show -s)"
 _COUNT=0
 while read -r _PORT
 do
+	# Ensure to exclude VXLAN and GRE system ports
+	if [[ "${_PORT}" =~ "gre_sys" || "${_PORT}" =~ "vxlan_sys" ]]; then break; fi
+
         _TXT1[${_COUNT}]=$(echo "${_COUNTERS}"|grep -A 4 -E "(${_PORT} \(|${_PORT}$)"|grep -E -o "TX packets:[0-9]{1,99}"|sed -e "s/^.*://g")
         _RXT1[${_COUNT}]=$(echo "${_COUNTERS}"|grep -A 4 -E "(${_PORT} \(|${_PORT}$)"|grep -E -o "RX packets:[0-9]{1,99}"|sed -e "s/^.*://g")
 	_TXERRORT1[${_COUNT}]=$(echo "${_COUNTERS}"|grep -A 4 -E "(${_PORT} \(|${_PORT}$)"|grep -E -o "TX .*errors:[0-9]{1,99}"|grep -E -o "errors:[0-9]{1,99}"|sed -e "s/^.*://g")
